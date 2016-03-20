@@ -37,6 +37,7 @@ class TagTestArticle1Factory(factory.DjangoModelFactory):
 class TagFactory(factory.DjangoModelFactory):
     class Meta:
         model = Tag
+        django_get_or_create = ('label',)
 
     label = factory.Sequence(lambda n: 'Tag {}'.format(n))
 

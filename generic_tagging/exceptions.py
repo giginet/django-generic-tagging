@@ -1,0 +1,2 @@
+class CannotReorderException(Exception):
+    pass

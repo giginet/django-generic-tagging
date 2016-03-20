@@ -5,6 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+from .exceptions import CannotReorderException
+
 
 class TagManager(models.Manager):
     def get_for_object(self, object):
@@ -22,11 +24,12 @@ class TaggedItemManager(models.Manager):
         :param label: Tag name
         :param object: Object
         :param author: Author
+        :return: created tagged item
         '''
         if not author.has_perm('generic_tagging.add_tagged_item', obj=object):
             raise PermissionDenied('The user could not add the label to the object')
         ct = ContentType.objects.get_for_model(object)
-        tag = Tag.objects.get_or_create(label)
+        tag = Tag.objects.get_or_create(label=label)[0]
         tagged_item = self.create(tag=tag,
                                   content_type=ct,
                                   object_id=object.pk,
@@ -39,14 +42,14 @@ class TaggedItemManager(models.Manager):
         :param object: Object
         '''
         ct = ContentType.objects.get_for_model(object)
-        self.remove(tag__label=label, content_type=ct, object_id=object.pk)
+        self.filter(tag__label=label, content_type=ct, object_id=object.pk).delete()
 
     def clear(self, object):
         '''Clear all tagged item from the object
         :param object: Object
         '''
         ct = ContentType.objects.get_for_model(object)
-        self.remove(content_type=ct, object_id=object.pk)
+        self.filter(content_type=ct, object_id=object.pk).delete()
 
     def get_tag_count(self, object):
         '''Get number of tags which are belonged to the specific object
@@ -54,7 +57,7 @@ class TaggedItemManager(models.Manager):
         :return: number of tags
         '''
         ct = ContentType.objects.get_for_model(object)
-        return self.count(content_type=ct, object_id=object.pk)
+        return self.filter(content_type=ct, object_id=object.pk).count()
 
     @staticmethod
     def swap_order(tagged_item, other_tagged_item):
@@ -62,11 +65,10 @@ class TaggedItemManager(models.Manager):
         If two tagged items owners are not same, then it will raise `ValidationError`.
         :param tagged_item: Tagged item
         :param other_tagged_item: Another tagged item
-        :return:
         '''
         if not (tagged_item.content_type.pk == other_tagged_item.content_type.pk and
                         tagged_item.object_id == other_tagged_item.object_id):
-            raise ValidationError('These tags are not belonged to same object')
+            raise CannotReorderException('These tags are not belonged to same object')
         temp = tagged_item.order
         tagged_item.order = other_tagged_item.order
         other_tagged_item.order = temp

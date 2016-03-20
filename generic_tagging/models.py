@@ -111,7 +111,7 @@ class TaggedItem(models.Model):
         )
 
     def __str__(self):
-        return '[} {}'.format(str(self.tag), str(self.content_object))
+        return '{} {}'.format(str(self.tag), str(self.content_object))
 
     def lock(self, by_user):
         '''Lock this tag

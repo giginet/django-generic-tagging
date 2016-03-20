@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 
 from ..models import Tag, TaggedItem
-from .models import TagTestArticle
+from .models import TagTestArticle0, TagTestArticle1
 
 
 class UserFactory(factory.DjangoModelFactory):
@@ -20,9 +20,16 @@ class UserFactory(factory.DjangoModelFactory):
     last_login = timezone.now()
 
 
-class TagTestArticleFactory(factory.DjangoModelFactory):
+class TagTestArticle0Factory(factory.DjangoModelFactory):
     class Meta:
-        model = TagTestArticle
+        model = TagTestArticle0
+
+    title = 'Test article'
+
+
+class TagTestArticle1Factory(factory.DjangoModelFactory):
+    class Meta:
+        model = TagTestArticle1
 
     title = 'Test article'
 
@@ -40,4 +47,4 @@ class TaggedItemFactory(factory.DjangoModelFactory):
 
     tag = factory.SubFactory(TagFactory)
     author = factory.SubFactory(UserFactory)
-    content_object = factory.SubFactory(TagTestArticleFactory)
+    content_object = factory.SubFactory(TagTestArticle0Factory)

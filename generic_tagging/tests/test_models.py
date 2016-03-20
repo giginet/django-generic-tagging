@@ -27,7 +27,7 @@ class TaggedItemTestCase(TestCase):
 
     def test_str(self):
         item = TaggedItemFactory(tag__label='Label')
-        self.assertEqual(str(item), 'Label TagTestArticle object')
+        self.assertEqual(str(item), 'Label TagTestArticle0 object')
 
     def test_order(self):
         item0 = TaggedItemFactory(order=2)

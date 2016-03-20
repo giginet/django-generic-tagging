@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from .exceptions import CannotReorderException
+from .exceptions import CannotReorderException, CannotDeleteLockedTagException
 
 
 class TagManager(models.Manager):
@@ -124,6 +124,11 @@ class TaggedItem(models.Model):
     def __str__(self):
         return '{} {}'.format(str(self.tag), str(self.content_object))
 
+    def delete(self, *args, **kwargs):
+        if self.locked:
+            raise CannotDeleteLockedTagException('Can not delete locked tag')
+        return super().delete(*args, **kwargs)
+
     def lock(self, by_user):
         '''Lock this tag
         If `by_user` doesn't have `lock_tagged_item` permission, then it will raise `PermissionDenied` exception
@@ -131,7 +136,7 @@ class TaggedItem(models.Model):
         '''
         if self.locked:
             raise ValidationError('''The tagged item is already locked''')
-        if not by_user.has_perm('lock_tagged_item', obj=self):
+        if not by_user.has_perm('generic_tagging.lock_tagged_item', obj=self):
             raise PermissionDenied('''The user doesn't have lock_tagged_item permission''')
         self.locked = True
         self.save()
@@ -143,7 +148,7 @@ class TaggedItem(models.Model):
         '''
         if not self.locked:
             raise ValidationError('''The tagged item is already unlocked''')
-        if not by_user.has_perm('unlock_tagged_item', obj=self):
+        if not by_user.has_perm('generic_tagging.unlock_tagged_item', obj=self):
             raise PermissionDenied('''The user doesn't have unlock_tagged_item permission''')
         self.locked = False
         self.save()

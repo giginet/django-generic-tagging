@@ -12,12 +12,21 @@ class TagManager(models.Manager):
     def get_for_object(self, object):
         '''Get tags which are belonged to the specific object
         :param obj: Object
+        :return: tags
         '''
         ct = ContentType.objects.get_for_model(object)
         return self.filter(items__content_type=ct, items__object_id=object.pk).distinct()
 
 
 class TaggedItemManager(models.Manager):
+    def get_for_object(self, object):
+        '''Get tagged items which are belongs to the specific object
+        :param obj: Object
+        :return: tagged items
+        '''
+        ct = ContentType.objects.get_for_model(object)
+        return self.filter(content_type=ct, object_id=object.pk).distinct()
+
     def add(self, label, object, author):
         '''Add the tag to the specific object.
         If the tag named as 'label' is not exist, it will be created.

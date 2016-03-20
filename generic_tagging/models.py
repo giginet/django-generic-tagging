@@ -1,12 +1,12 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .exceptions import CannotReorderException, CannotDeleteLockedTagException
 
+from .compatibility import GenericForeignKey
 
 class TagManager(models.Manager):
     def get_for_object(self, object):

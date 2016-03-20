@@ -89,7 +89,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
-    'generic_tagging'
+    'generic_tagging',
+    'generic_tagging.tests',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -97,3 +98,5 @@ AUTHENTICATION_BACKENDS = (
 )
 
 TEST_RUNNER = 'generic_tagging.tests.compatibility.TestRunner'
+
+AUTH_USER_MODEL = 'auth.User'

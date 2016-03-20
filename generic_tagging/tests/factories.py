@@ -4,7 +4,6 @@ from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 
 from ..models import Tag, TaggedItem
-
 from .models import TagTestArticle
 
 
@@ -32,7 +31,7 @@ class TagFactory(factory.DjangoModelFactory):
     class Meta:
         model = Tag
 
-    title = factory.Sequence(lambda n: 'Tag {}'.format(n))
+    label = factory.Sequence(lambda n: 'Tag {}'.format(n))
 
 
 class TaggedItemFactory(factory.DjangoModelFactory):
@@ -41,3 +40,4 @@ class TaggedItemFactory(factory.DjangoModelFactory):
 
     tag = factory.SubFactory(TagFactory)
     author = factory.SubFactory(UserFactory)
+    content_object = factory.SubFactory(TagTestArticleFactory)

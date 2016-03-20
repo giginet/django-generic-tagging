@@ -101,3 +101,21 @@ class TaggedItemTestCase(TestCase):
 
         self.assertRaises(CannotDeleteLockedTagException, item.delete)
         self.assertIn(item, TaggedItem.objects.all())
+
+    def test_related_name_for_tag(self):
+        tag = TagFactory()
+        item0 = TaggedItemFactory(tag=tag)
+        item1 = TaggedItemFactory(tag=tag)
+        TaggedItemFactory()
+        self.assertEqual(tag.items.count(), 2)
+        self.assertEqual(tag.items.all()[0], item1)
+        self.assertEqual(tag.items.all()[1], item0)
+
+    def test_related_name_for_author(self):
+        item0 = TaggedItemFactory(author=self.user)
+        item1 = TaggedItemFactory(author=self.user)
+        TaggedItemFactory()
+
+        self.assertEqual(self.user.items.count(), 2)
+        self.assertEqual(self.user.items.all()[0], item1)
+        self.assertEqual(self.user.items.all()[1], item0)

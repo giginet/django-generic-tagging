@@ -137,7 +137,7 @@ class TaggedItem(models.Model):
         '''
         if self.locked:
             raise ValidationError('''The tagged item is already locked''')
-        if not by_user.has_perm('generic_tagging.lock_tagged_item', obj=self):
+        if not by_user.has_perm('generic_tagging.lock_tagged_item'):
             raise PermissionDenied('''The user doesn't have lock_tagged_item permission''')
         self.locked = True
         self.save()
@@ -149,7 +149,7 @@ class TaggedItem(models.Model):
         '''
         if not self.locked:
             raise ValidationError('''The tagged item is already unlocked''')
-        if not by_user.has_perm('generic_tagging.unlock_tagged_item', obj=self):
+        if not by_user.has_perm('generic_tagging.unlock_tagged_item'):
             raise PermissionDenied('''The user doesn't have unlock_tagged_item permission''')
         self.locked = False
         self.save()

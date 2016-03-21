@@ -1,13 +1,12 @@
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.test.testcases import TestCase
+from django.contrib.auth.models import User, Permission
 
 from generic_tagging.exceptions import CannotDeleteLockedTagException
 from generic_tagging.models import Tag, TaggedItem, TagManager, TaggedItemManager
 from generic_tagging.tests.factories import TagFactory, TaggedItemFactory
 
 from .factories import UserFactory
-
-from .compatibility import patch
 
 
 class TagTestCase(TestCase):
@@ -56,17 +55,19 @@ class TaggedItemTestCase(TestCase):
         item = TaggedItemFactory()
         self.assertFalse(item.locked)
 
-        with patch.object(self.user, 'has_perm', and_return=True) as user:
-            item.lock(user)
-            user.has_perm.assert_called_with('generic_tagging.lock_tagged_item', obj=item)
+        permission = Permission.objects.get(codename='lock_tagged_item')
+        self.user.user_permissions.add(permission)
+        # reload user to prevent caching
+        user = User.objects.get(pk=self.user.pk)
+
+        item.lock(self.user)
         self.assertTrue(item.locked)
 
     def test_lock_with_locked_item(self):
         item = TaggedItemFactory(locked=True)
         self.assertTrue(item.locked)
 
-        with patch.object(self.user, 'has_perm', and_return=True):
-            self.assertRaises(ValidationError, item.lock, self.user)
+        self.assertRaises(ValidationError, item.lock, self.user)
 
     def test_unlock_without_permission(self):
         tag = TaggedItemFactory(locked=True)
@@ -76,17 +77,19 @@ class TaggedItemTestCase(TestCase):
         item = TaggedItemFactory(locked=True)
         self.assertTrue(item.locked)
 
-        with patch.object(self.user, 'has_perm', and_return=True) as user:
-            item.unlock(user)
-            user.has_perm.assert_called_with('generic_tagging.unlock_tagged_item', obj=item)
+        permission = Permission.objects.get(codename='unlock_tagged_item')
+        self.user.user_permissions.add(permission)
+        # reload user to prevent caching
+        user = User.objects.get(pk=self.user.pk)
+
+        item.unlock(user)
         self.assertFalse(item.locked)
 
     def test_unlock_with_not_locked_item(self):
         item = TaggedItemFactory()
         self.assertFalse(item.locked)
 
-        with patch.object(self.user, 'has_perm', and_return=True):
-            self.assertRaises(ValidationError, item.unlock, self.user)
+        self.assertRaises(ValidationError, item.unlock, self.user)
 
     def test_delete_for_unlocked_item(self):
         item = TaggedItemFactory()

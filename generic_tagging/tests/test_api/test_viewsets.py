@@ -114,3 +114,23 @@ class TaggedItemViewSet(TestCase):
         r = self.client.delete('/tagged_items/%d/' % item.pk)
         self.assertEqual(r.status_code, 204)
         self.assertEqual(TaggedItem.objects.count(), count - 1)
+
+    def test_lock(self):
+        lock_permission = Permission.objects.get(codename='lock_tagged_item')
+        self.user.user_permissions.add(lock_permission)
+        self.client.login(username=self.user.username, password='password')
+
+        item = TaggedItemFactory()
+        r = self.client.patch('/tagged_items/%d/lock/' % item.pk)
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
+
+    def test_unlock(self):
+        unlock_permission = Permission.objects.get(codename='unlock_tagged_item')
+        self.user.user_permissions.add(unlock_permission)
+        self.client.login(username=self.user.username, password='password')
+
+        item = TaggedItemFactory(locked=True)
+        r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)

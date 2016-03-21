@@ -2,8 +2,15 @@ from django.test.testcases import TestCase
 from django.contrib.contenttypes.models import ContentType
 
 from generic_tagging.models import TaggedItem, Tag
-from generic_tagging.api.serializers import TaggedItemSerializer
+from generic_tagging.api.serializers import TagSerializer, TaggedItemSerializer
 from generic_tagging.tests.factories import TaggedItemFactory, UserFactory, TagTestArticle0Factory, TagFactory
+
+
+class TagSerializerTestCase(TestCase):
+    def test_write(self):
+        serializer = TagSerializer(data={'label': 'new label'})
+        self.assertTrue(serializer.is_valid())
+        serializer.save()
 
 
 class TaggedItemSerializerTestCase(TestCase):

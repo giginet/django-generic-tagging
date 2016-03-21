@@ -70,7 +70,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
@@ -100,3 +99,7 @@ AUTHENTICATION_BACKENDS = (
 TEST_RUNNER = 'generic_tagging.tests.compatibility.TestRunner'
 
 AUTH_USER_MODEL = 'auth.User'
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}

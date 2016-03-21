@@ -1,7 +1,9 @@
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from ..models import Tag, TaggedItem
+from generic_tagging.api.fields import TagField
+from ..models import Tag, TaggedItem, TagManager
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -10,16 +12,11 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'label')
         extra_kwargs = {'id': {'read_only': True}}
 
-    def to_internal_value(self, data):
-        tag, created = Tag.objects.get_or_create(label=data['label'])
-        return tag
-
 
 class TaggedItemSerializer(serializers.ModelSerializer):
     content_type = serializers.PrimaryKeyRelatedField(queryset=ContentType.objects.all())
     created_at = serializers.DateTimeField(read_only=True)
-
-    tag = TagSerializer()
+    tag = TagField()
 
     class Meta:
         model = TaggedItem

@@ -5,6 +5,7 @@ include =
 omit =
     generic_tagging/__init__.py
     generic_tagging/tests/compatibility.py
+    generic_tagging/compatibility.py
 exclude_lines =
     pragma: no cover
     if __name__ == .__main__.:

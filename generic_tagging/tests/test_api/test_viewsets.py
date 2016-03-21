@@ -125,6 +125,22 @@ class TaggedItemViewSet(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
 
+    def test_lock_without_permission(self):
+        item = TaggedItemFactory()
+        r = self.client.patch('/tagged_items/%d/lock/' % item.pk)
+        self.assertEqual(r.status_code, 403)
+        self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)
+
+    def test_lock_for_locked_item(self):
+        lock_permission = Permission.objects.get(codename='lock_tagged_item')
+        self.user.user_permissions.add(lock_permission)
+        self.client.login(username=self.user.username, password='password')
+
+        item = TaggedItemFactory(locked=True)
+        r = self.client.patch('/tagged_items/%d/lock/' % item.pk)
+        self.assertEqual(r.status_code, 400)
+        self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
+
     def test_unlock(self):
         unlock_permission = Permission.objects.get(codename='unlock_tagged_item')
         self.user.user_permissions.add(unlock_permission)
@@ -133,4 +149,19 @@ class TaggedItemViewSet(TestCase):
         item = TaggedItemFactory(locked=True)
         r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
         self.assertEqual(r.status_code, 200)
+        self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)
+
+    def test_unlock_without_permission(self):
+        item = TaggedItemFactory(locked=True)
+        r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
+        self.assertEqual(r.status_code, 403)
+
+    def test_unlock_for_unlocked_item(self):
+        unlock_permission = Permission.objects.get(codename='unlock_tagged_item')
+        self.user.user_permissions.add(unlock_permission)
+        self.client.login(username=self.user.username, password='password')
+
+        item = TaggedItemFactory()
+        r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
+        self.assertEqual(r.status_code, 400)
         self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)

@@ -1,3 +1,4 @@
+from urllib.parse import quote
 from django.test.testcases import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
@@ -16,19 +17,27 @@ class TagViewSetTestCase(TestCase):
         ]
         self.client = APIClient()
 
+    @staticmethod
+    def _dict_for_tag(tag):
+        return {'id': tag.pk,
+                'label': tag.label,
+                'url': 'http://testserver/api/tags/%d/' % tag.pk,
+                'absolute_url': 'http://testserver/%s/' % quote(tag.label)}
+
     def test_list(self):
         r = self.client.get('/api/tags/')
         self.assertEqual(r.status_code, 200)
+
         self.assertEqual(r.data, [
-            {'id': self.tags[0].pk, 'label': self.tags[0].label},
-            {'id': self.tags[1].pk, 'label': self.tags[1].label},
-            {'id': self.tags[2].pk, 'label': self.tags[2].label},
+            self._dict_for_tag(self.tags[0]),
+            self._dict_for_tag(self.tags[1]),
+            self._dict_for_tag(self.tags[2]),
         ])
 
     def test_retrieve(self):
         r = self.client.get('/api/tags/{}/'.format(self.tags[0].pk))
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.data, {'id': self.tags[0].pk, 'label': self.tags[0].label})
+        self.assertEqual(r.data, self._dict_for_tag(self.tags[0]))
 
     def test_create(self):
         self.assertRaises(ObjectDoesNotExist, Tag.objects.get, label='new label')
@@ -76,7 +85,7 @@ class TaggedItemViewSet(TestCase):
         self.assertIsNone(tagged_item.author)
 
     def test_create_with_exist_tag(self):
-        tag = TagFactory(label='exist tag')
+        TagFactory(label='exist tag')
         article = TagTestArticle0Factory()
         ct = ContentType.objects.get_for_model(article)
         item_count = TaggedItem.objects.count()

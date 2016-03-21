@@ -107,7 +107,7 @@ class TaggedItem(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     locked = models.BooleanField(_('Locked'), default=False)
     order = models.IntegerField(_('Order'), default=0, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Author'), related_name='items')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Author'), related_name='items', null=True, blank=True)
     created_at = models.DateTimeField(_('Created at'), auto_now_add=True)
 
     objects = TaggedItemManager()

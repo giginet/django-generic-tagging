@@ -17,7 +17,7 @@ class TagViewSetTestCase(TestCase):
         self.client = APIClient()
 
     def test_list(self):
-        r = self.client.get('/tags/')
+        r = self.client.get('/api/tags/')
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.data, [
             {'id': self.tags[0].pk, 'label': self.tags[0].label},
@@ -26,26 +26,26 @@ class TagViewSetTestCase(TestCase):
         ])
 
     def test_retrieve(self):
-        r = self.client.get('/tags/{}/'.format(self.tags[0].pk))
+        r = self.client.get('/api/tags/{}/'.format(self.tags[0].pk))
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.data, {'id': self.tags[0].pk, 'label': self.tags[0].label})
 
     def test_create(self):
         self.assertRaises(ObjectDoesNotExist, Tag.objects.get, label='new label')
-        r = self.client.post('/tags/', {'label': 'new label'}, format='json')
+        r = self.client.post('/api/tags/', {'label': 'new label'}, format='json')
         self.assertEqual(r.status_code, 201)
         self.assertIsNotNone(Tag.objects.get(label='new label'))
 
     def test_delete(self):
         tag = TagFactory()
         count = Tag.objects.count()
-        r = self.client.delete('/tags/%d/' % tag.pk)
+        r = self.client.delete('/api/tags/%d/' % tag.pk)
         self.assertEqual(r.status_code, 204)
         self.assertEqual(Tag.objects.count(), count - 1)
 
     def test_update(self):
         tag = TagFactory()
-        r = self.client.patch('/tags/%d/' % tag.pk, {'label': 'new name'})
+        r = self.client.patch('/api/tags/%d/' % tag.pk, {'label': 'new name'})
         self.assertEqual(r.status_code, 405)
 
 
@@ -54,12 +54,12 @@ class TaggedItemViewSet(TestCase):
         self.user = UserFactory()
 
     def test_list(self):
-        r = self.client.get('/tagged_items/')
+        r = self.client.get('/api/tagged_items/')
         self.assertEqual(r.status_code, 405)
 
     def test_retrieve(self):
         tagged_item = TaggedItemFactory()
-        r = self.client.get('/tagged_items/%d/' % tagged_item.pk)
+        r = self.client.get('/api/tagged_items/%d/' % tagged_item.pk)
         self.assertEqual(r.status_code, 405)
 
     def test_create_with_new_tag(self):
@@ -68,7 +68,7 @@ class TaggedItemViewSet(TestCase):
         article = TagTestArticle0Factory()
         ct = ContentType.objects.get_for_model(article)
 
-        r = self.client.post('/tagged_items/', {'tag': 'new tag', 'object_id': article.pk, 'content_type': ct.pk})
+        r = self.client.post('/api/tagged_items/', {'tag': 'new tag', 'object_id': article.pk, 'content_type': ct.pk})
         self.assertEqual(r.status_code, 201)
         self.assertEqual(TaggedItem.objects.count(), item_count + 1)
         self.assertEqual(Tag.objects.count(), tag_count + 1)
@@ -82,7 +82,7 @@ class TaggedItemViewSet(TestCase):
         item_count = TaggedItem.objects.count()
         tag_count = Tag.objects.count()
 
-        r = self.client.post('/tagged_items/', {'tag': 'exist tag', 'object_id': article.pk, 'content_type': ct.pk})
+        r = self.client.post('/api/tagged_items/', {'tag': 'exist tag', 'object_id': article.pk, 'content_type': ct.pk})
         self.assertEqual(r.status_code, 201)
         self.assertEqual(TaggedItem.objects.count(), item_count + 1)
         self.assertEqual(Tag.objects.count(), tag_count)
@@ -96,7 +96,7 @@ class TaggedItemViewSet(TestCase):
         article = TagTestArticle0Factory()
         ct = ContentType.objects.get_for_model(article)
 
-        r = self.client.post('/tagged_items/', {'tag': 'new tag', 'object_id': article.pk, 'content_type': ct.pk})
+        r = self.client.post('/api/tagged_items/', {'tag': 'new tag', 'object_id': article.pk, 'content_type': ct.pk})
         self.assertEqual(r.status_code, 201)
         self.assertEqual(TaggedItem.objects.count(), item_count + 1)
         self.assertEqual(Tag.objects.count(), tag_count + 1)
@@ -105,13 +105,13 @@ class TaggedItemViewSet(TestCase):
 
     def test_update(self):
         item = TaggedItemFactory()
-        r = self.client.patch('/tagged_items/%d/' % item.pk, {'locked': False})
+        r = self.client.patch('/api/tagged_items/%d/' % item.pk, {'locked': False})
         self.assertEqual(r.status_code, 405)
 
     def test_delete(self):
         item = TaggedItemFactory()
         count = TaggedItem.objects.count()
-        r = self.client.delete('/tagged_items/%d/' % item.pk)
+        r = self.client.delete('/api/tagged_items/%d/' % item.pk)
         self.assertEqual(r.status_code, 204)
         self.assertEqual(TaggedItem.objects.count(), count - 1)
 
@@ -121,13 +121,13 @@ class TaggedItemViewSet(TestCase):
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory()
-        r = self.client.patch('/tagged_items/%d/lock/' % item.pk)
+        r = self.client.patch('/api/tagged_items/%d/lock/' % item.pk)
         self.assertEqual(r.status_code, 200)
         self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
 
     def test_lock_without_permission(self):
         item = TaggedItemFactory()
-        r = self.client.patch('/tagged_items/%d/lock/' % item.pk)
+        r = self.client.patch('/api/tagged_items/%d/lock/' % item.pk)
         self.assertEqual(r.status_code, 403)
         self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)
 
@@ -137,7 +137,7 @@ class TaggedItemViewSet(TestCase):
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory(locked=True)
-        r = self.client.patch('/tagged_items/%d/lock/' % item.pk)
+        r = self.client.patch('/api/tagged_items/%d/lock/' % item.pk)
         self.assertEqual(r.status_code, 400)
         self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
 
@@ -147,13 +147,13 @@ class TaggedItemViewSet(TestCase):
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory(locked=True)
-        r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
+        r = self.client.patch('/api/tagged_items/%d/unlock/' % item.pk)
         self.assertEqual(r.status_code, 200)
         self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)
 
     def test_unlock_without_permission(self):
         item = TaggedItemFactory(locked=True)
-        r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
+        r = self.client.patch('/api/tagged_items/%d/unlock/' % item.pk)
         self.assertEqual(r.status_code, 403)
 
     def test_unlock_for_unlocked_item(self):
@@ -162,6 +162,6 @@ class TaggedItemViewSet(TestCase):
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory()
-        r = self.client.patch('/tagged_items/%d/unlock/' % item.pk)
+        r = self.client.patch('/api/tagged_items/%d/unlock/' % item.pk)
         self.assertEqual(r.status_code, 400)
         self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)

@@ -1,8 +1,8 @@
-from django.conf.urls import url
-from rest_framework import routers
-from generic_tagging.api.viewsets import TagViewSet, TaggedItemViewSet
+from django.conf.urls import patterns, url, include
+from generic_tagging.api.routers import TaggingAPIRouter
 
-router = routers.SimpleRouter(trailing_slash=True)
-router.register(r'tags', TagViewSet)
-router.register(r'tagged_items', TaggedItemViewSet)
-urlpatterns = router.urls
+router = TaggingAPIRouter(trailing_slash=True)
+
+urlpatterns = patterns(r'',
+    url(r'^api/', include(router.urls)),
+)

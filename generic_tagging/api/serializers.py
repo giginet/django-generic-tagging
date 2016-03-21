@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
 from rest_framework import serializers
 
 from ..models import Tag, TaggedItem
@@ -14,7 +13,6 @@ class TagSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         tag, created = Tag.objects.get_or_create(label=data['label'])
         return tag
-
 
 
 class TaggedItemSerializer(serializers.ModelSerializer):

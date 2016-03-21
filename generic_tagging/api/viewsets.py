@@ -43,7 +43,6 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
                             status=status.HTTP_400_BAD_REQUEST)
         return super().list(request, *args, **kwargs)
 
-
     def create(self, request):
         data = request.data
         if request.user.is_authenticated:

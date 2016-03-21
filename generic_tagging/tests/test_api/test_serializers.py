@@ -2,8 +2,24 @@ from django.test.testcases import TestCase
 from django.contrib.contenttypes.models import ContentType
 
 from generic_tagging.models import TaggedItem, Tag
-from generic_tagging.api.serializers import TagSerializer, TaggedItemSerializer
+from generic_tagging.api.serializers import TagSerializer, TaggedItemSerializer, ContentObjectSerializer
 from generic_tagging.tests.factories import TaggedItemFactory, UserFactory, TagTestArticle0Factory, TagFactory
+from generic_tagging.tests.compatibility import patch
+
+
+class ContentObjectSerializerTestCase(TestCase):
+    def test_read(self):
+        article = TagTestArticle0Factory()
+        ct = ContentType.objects.get_for_model(article)
+        with patch.object(article, 'get_absolute_url', create=True, return_value='absolute_url'):
+            serializer = ContentObjectSerializer(article)
+            data = serializer.data
+            self.assertEqual(data, {
+                'content_type': ct.pk,
+                'object_id': article.pk,
+                'absolute_url': 'absolute_url',
+                'str': str(article)
+            })
 
 
 class TagSerializerTestCase(TestCase):

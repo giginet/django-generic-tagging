@@ -5,7 +5,8 @@ from django.contrib.auth.models import User, Permission
 
 from generic_tagging.exceptions import CannotDeleteLockedTagException
 from generic_tagging.models import Tag, TaggedItem, TagManager, TaggedItemManager
-from generic_tagging.tests.factories import TagFactory, TaggedItemFactory
+from generic_tagging.tests.factories import TagFactory, TaggedItemFactory, \
+    TagTestArticle0Factory, TagTestArticle1Factory
 
 from .factories import UserFactory
 
@@ -31,6 +32,14 @@ class TagTestCase(TestCase):
         tag = TagFactory()
         url = reverse('generic_tagging_tag_detail', kwargs={'slug': tag.label})
         self.assertEqual(tag.get_absolute_url(), url)
+
+    def test_items(self):
+        tag = TagFactory()
+        item0 = TaggedItemFactory(content_object=TagTestArticle0Factory(), tag=tag)
+        item1 = TaggedItemFactory(content_object=TagTestArticle1Factory(), tag=tag)
+        self.assertEqual(tag.items.count(), 2)
+        self.assertEqual(tag.items.all()[1], item0)
+        self.assertEqual(tag.items.all()[0], item1)
 
 class TaggedItemTestCase(TestCase):
     def setUp(self):

@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.test.testcases import TestCase
 from django.contrib.auth.models import User, Permission
@@ -26,6 +27,10 @@ class TagTestCase(TestCase):
         self.assertEqual(tags[1], tag0)
         self.assertEqual(tags[2], tag2)
 
+    def test_get_absolute_url(self):
+        tag = TagFactory()
+        url = reverse('generic_tagging_tag_detail', kwargs={'slug': tag.label})
+        self.assertEqual(tag.get_absolute_url(), url)
 
 class TaggedItemTestCase(TestCase):
     def setUp(self):

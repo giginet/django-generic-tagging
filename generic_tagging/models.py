@@ -99,6 +99,10 @@ class Tag(models.Model):
     def __str__(self):
         return self.label
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('generic_tagging_tag_detail', (), {'slug': self.label})
+
 
 class TaggedItem(models.Model):
     tag = models.ForeignKey(Tag, verbose_name=_('Tag'), related_name='items')

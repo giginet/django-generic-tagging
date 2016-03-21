@@ -107,7 +107,7 @@ class TaggedItem(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     locked = models.BooleanField(_('Locked'), default=False)
     order = models.IntegerField(_('Order'), default=0, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Author'), related_name='items')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Author'), related_name='items', null=True, blank=True)
     created_at = models.DateTimeField(_('Created at'), auto_now_add=True)
 
     objects = TaggedItemManager()
@@ -137,7 +137,7 @@ class TaggedItem(models.Model):
         '''
         if self.locked:
             raise ValidationError('''The tagged item is already locked''')
-        if not by_user.has_perm('generic_tagging.lock_tagged_item', obj=self):
+        if not by_user.has_perm('generic_tagging.lock_tagged_item'):
             raise PermissionDenied('''The user doesn't have lock_tagged_item permission''')
         self.locked = True
         self.save()
@@ -149,7 +149,7 @@ class TaggedItem(models.Model):
         '''
         if not self.locked:
             raise ValidationError('''The tagged item is already unlocked''')
-        if not by_user.has_perm('generic_tagging.unlock_tagged_item', obj=self):
+        if not by_user.has_perm('generic_tagging.unlock_tagged_item'):
             raise PermissionDenied('''The user doesn't have unlock_tagged_item permission''')
         self.locked = False
         self.save()

@@ -4,8 +4,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from rest_framework.test import APIClient
-from generic_tagging.tests.factories import TagFactory, TaggedItemFactory, UserFactory, TagTestArticle0Factory
+from generic_tagging.tests.factories import TagFactory, TaggedItemFactory, UserFactory, \
+    TagTestArticle0Factory, TagTestArticle1Factory
 from generic_tagging.models import Tag, TaggedItem
+from generic_tagging.tests.models import TagTestArticle0
+from generic_tagging.tests.compatibility import patch
 
 
 class TagViewSetTestCase(TestCase):
@@ -81,17 +84,60 @@ class TaggedItemViewSet(TestCase):
 
     def test_list_with_object(self):
         article0 = TagTestArticle0Factory()
-        article1 = TagTestArticle0Factory()
+        article1 = TagTestArticle1Factory()
         tagged_item0 = TaggedItemFactory(content_object=article0)
         tagged_item1 = TaggedItemFactory(content_object=article0)
         tagged_item2 = TaggedItemFactory(content_object=article1)
+        ct0 = ContentType.objects.get_for_model(article0)
+        ct1 = ContentType.objects.get_for_model(article1)
 
-        ct = ContentType.objects.get_for_model(article0)
-        r = self.client.get('/api/tagged_items/', {'content_type': ct.pk, 'object_id': article0.pk})
+        with patch.object(TagTestArticle0, 'get_absolute_url', create=True, return_value='/absolute_url/'):
+            r = self.client.get('/api/tagged_items/', {'content_type': ct0.pk, 'object_id': article0.pk})
+            self.assertEqual(r.status_code, 200)
+            self.assertEqual(len(r.data), 2)
+            self.assertEqual(r.data[0]['id'], tagged_item0.pk)
+            self.assertEqual(r.data[1]['id'], tagged_item1.pk)
+            self.assertEqual(r.data[0], {
+                'id': tagged_item0.pk,
+                'content_type': tagged_item0.content_type.pk,
+                'object_id': tagged_item0.object_id,
+                'content_object': {
+                    'content_type': tagged_item0.content_type.pk,
+                    'object_id': tagged_item0.object_id,
+                    'str': str(tagged_item0.content_object),
+                    'absolute_url': 'http://testserver/absolute_url/'
+                },
+                'author': tagged_item0.author.pk,
+                'locked': False,
+                'created_at': tagged_item0.created_at.isoformat(),
+                'tag': {
+                    'label': tagged_item0.tag.label,
+                    'id': tagged_item0.tag.pk
+                }
+            })
+
+        r = self.client.get('/api/tagged_items/', {'content_type': ct1.pk, 'object_id': article1.pk})
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(len(r.data), 2)
-        self.assertEqual(r.data[0]['id'], tagged_item0.pk)
-        self.assertEqual(r.data[1]['id'], tagged_item1.pk)
+        self.assertEqual(len(r.data), 1)
+        self.assertEqual(r.data[0]['id'], tagged_item2.pk)
+        self.assertEqual(r.data[0], {
+            'id': tagged_item2.pk,
+            'content_type': tagged_item2.content_type.pk,
+            'object_id': tagged_item2.object_id,
+            'content_object': {
+                'content_type': tagged_item2.content_type.pk,
+                'object_id': tagged_item2.object_id,
+                'str': str(tagged_item2.content_object),
+                'absolute_url': None
+            },
+            'author': tagged_item2.author.pk,
+            'locked': False,
+            'created_at': tagged_item2.created_at.isoformat(),
+            'tag': {
+                'label': tagged_item2.tag.label,
+                'id': tagged_item2.tag.pk
+            }
+        })
 
     def test_retrieve(self):
         tagged_item = TaggedItemFactory()

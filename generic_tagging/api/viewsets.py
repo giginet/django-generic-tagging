@@ -21,10 +21,28 @@ class TagViewSet(mixins.CreateModelMixin,
 
 class TaggedItemViewSet(mixins.CreateModelMixin,
                         mixins.DestroyModelMixin,
+                        mixins.ListModelMixin,
                         viewsets.GenericViewSet):
     serializer_class = TaggedItemSerializer
     queryset = TaggedItem.objects.all()
     renderer_classes = (JSONRenderer,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        object_id = self.request.query_params.get('object_id', None)
+        content_type = self.request.query_params.get('content_type', None)
+        if object_id and content_type:
+            qs = qs.filter(object_id=object_id, content_type=content_type)
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        object_id = self.request.query_params.get('object_id', None)
+        content_type = self.request.query_params.get('content_type', None)
+        if not (content_type and object_id):
+            return Response('Query parameters must contain content_type and object_id.',
+                            status=status.HTTP_400_BAD_REQUEST)
+        return super().list(request, *args, **kwargs)
+
 
     def create(self, request):
         data = request.data

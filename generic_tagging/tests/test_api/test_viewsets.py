@@ -62,9 +62,36 @@ class TaggedItemViewSet(TestCase):
     def setUp(self):
         self.user = UserFactory()
 
-    def test_list(self):
+    def test_list_with_no_parameter(self):
         r = self.client.get('/api/tagged_items/')
-        self.assertEqual(r.status_code, 405)
+        self.assertEqual(r.status_code, 400)
+
+    def test_list_with_object_id_only(self):
+        article0 = TagTestArticle0Factory()
+        TaggedItemFactory(content_object=article0)
+        r = self.client.get('/api/tagged_items/', {'object_id': article0.pk})
+        self.assertEqual(r.status_code, 400)
+
+    def test_list_with_content_type_only(self):
+        article0 = TagTestArticle0Factory()
+        TaggedItemFactory(content_object=article0)
+        ct = ContentType.objects.get_for_model(article0)
+        r = self.client.get('/api/tagged_items/', {'content_type': ct.pk})
+        self.assertEqual(r.status_code, 400)
+
+    def test_list_with_object(self):
+        article0 = TagTestArticle0Factory()
+        article1 = TagTestArticle0Factory()
+        tagged_item0 = TaggedItemFactory(content_object=article0)
+        tagged_item1 = TaggedItemFactory(content_object=article0)
+        tagged_item2 = TaggedItemFactory(content_object=article1)
+
+        ct = ContentType.objects.get_for_model(article0)
+        r = self.client.get('/api/tagged_items/', {'content_type': ct.pk, 'object_id': article0.pk})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.data), 2)
+        self.assertEqual(r.data[0]['id'], tagged_item0.pk)
+        self.assertEqual(r.data[1]['id'], tagged_item1.pk)
 
     def test_retrieve(self):
         tagged_item = TaggedItemFactory()

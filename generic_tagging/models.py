@@ -117,7 +117,7 @@ class TaggedItem(models.Model):
     objects = TaggedItemManager()
 
     class Meta:
-        ordering = ('order', '-created_at')
+        ordering = ('order', 'created_at')
         unique_together = ('tag', 'content_type', 'object_id')
         verbose_name = _('Tagged item')
         verbose_name_plural = _('Tagged items')

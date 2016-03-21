@@ -17,8 +17,8 @@ class TaggingTemplateTagTestCase(TestCase):
         r = t.render(context)
         self.assertEqual(r.strip(), '')
         self.assertEqual(len(context['items']), 2)
-        self.assertEqual(context['items'][0], item1)
-        self.assertEqual(context['items'][1], item0)
+        self.assertEqual(context['items'][0], item0)
+        self.assertEqual(context['items'][1], item1)
 
     def test_get_tags_for(self):
         article = TagTestArticle0Factory()

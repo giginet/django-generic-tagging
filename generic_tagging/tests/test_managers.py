@@ -53,12 +53,12 @@ class TaggedItemManagerTestCase(TestCase):
         tagged_item3 = TaggedItemFactory(content_object=other_article)
 
         items0 = TaggedItem.objects.get_for_object(article)
-        self.assertEqual(items0[0], tagged_item1)
-        self.assertEqual(items0[1], tagged_item0)
+        self.assertEqual(items0[0], tagged_item0)
+        self.assertEqual(items0[1], tagged_item1)
 
         items1 = TaggedItem.objects.get_for_object(other_article)
-        self.assertEqual(items1[0], tagged_item3)
-        self.assertEqual(items1[1], tagged_item2)
+        self.assertEqual(items1[0], tagged_item2)
+        self.assertEqual(items1[1], tagged_item3)
 
     def test_add_with_not_permission(self):
         self.assertRaises(PermissionDenied, TaggedItem.objects.add, 'Tag name', self.article, self.user)

@@ -38,8 +38,9 @@ class TagTestCase(TestCase):
         item0 = TaggedItemFactory(content_object=TagTestArticle0Factory(), tag=tag)
         item1 = TaggedItemFactory(content_object=TagTestArticle1Factory(), tag=tag)
         self.assertEqual(tag.items.count(), 2)
-        self.assertEqual(tag.items.all()[1], item0)
-        self.assertEqual(tag.items.all()[0], item1)
+        self.assertEqual(tag.items.all()[0], item0)
+        self.assertEqual(tag.items.all()[1], item1)
+
 
 class TaggedItemTestCase(TestCase):
     def setUp(self):
@@ -125,8 +126,8 @@ class TaggedItemTestCase(TestCase):
         item1 = TaggedItemFactory(tag=tag)
         TaggedItemFactory()
         self.assertEqual(tag.items.count(), 2)
-        self.assertEqual(tag.items.all()[0], item1)
-        self.assertEqual(tag.items.all()[1], item0)
+        self.assertEqual(tag.items.all()[0], item0)
+        self.assertEqual(tag.items.all()[1], item1)
 
     def test_related_name_for_author(self):
         item0 = TaggedItemFactory(author=self.user)
@@ -134,5 +135,5 @@ class TaggedItemTestCase(TestCase):
         TaggedItemFactory()
 
         self.assertEqual(self.user.items.count(), 2)
-        self.assertEqual(self.user.items.all()[0], item1)
-        self.assertEqual(self.user.items.all()[1], item0)
+        self.assertEqual(self.user.items.all()[0], item0)
+        self.assertEqual(self.user.items.all()[1], item1)

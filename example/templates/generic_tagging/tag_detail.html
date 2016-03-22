@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tag {{ object.label }}</title>
+</head>
+<body>
+<h1>{{ object.label }}</h1>
+<div>
+    {% for item in object.items %}
+        <a href="{{ item.content_object.get_absolute_url }}">{{ item.content_object }}</a>
+    {% endfor %}
+</div>
+</body>
+</html>

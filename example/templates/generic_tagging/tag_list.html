@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tag list</title>
+</head>
+<body>
+<h1>All tags</h1>
+<ul>
+    {% for tag in object_list %}
+        <li><a href="{{ tag.get_absolute_url }}">{{ tag.label }}</a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>

@@ -43,7 +43,7 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
                             status=status.HTTP_400_BAD_REQUEST)
         return super().list(request, *args, **kwargs)
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         data = request.data
         if request.user.is_authenticated:
             data['author'] = request.user.pk
@@ -52,6 +52,12 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.locked:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
 
     @detail_route(methods=['patch'])
     def lock(self, request, pk):

@@ -197,6 +197,13 @@ class TaggedItemViewSet(TestCase):
         self.assertEqual(r.status_code, 204)
         self.assertEqual(TaggedItem.objects.count(), count - 1)
 
+    def test_delete_with_locked(self):
+        item = TaggedItemFactory(locked=True)
+        count = TaggedItem.objects.count()
+        r = self.client.delete('/api/tagged_items/%d/' % item.pk)
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(TaggedItem.objects.count(), count)
+
     def test_lock(self):
         lock_permission = Permission.objects.get(codename='lock_tagged_item')
         self.user.user_permissions.add(lock_permission)

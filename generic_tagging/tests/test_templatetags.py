@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.template import Template, Context
+from django.contrib.contenttypes.models import ContentType
 from .factories import TaggedItemFactory, TagTestArticle0Factory
 
 
@@ -35,3 +36,15 @@ class TaggingTemplateTagTestCase(TestCase):
         self.assertEqual(len(context['tags']), 2)
         self.assertEqual(context['tags'][0], item0.tag)
         self.assertEqual(context['tags'][1], item1.tag)
+
+    def test_get_content_type_for(self):
+        article = TagTestArticle0Factory()
+
+        t = Template(
+            "{% load tagging %}"
+            "{% get_content_type_for article as ct %}"
+        )
+        context = Context({'article': article})
+        r = t.render(context)
+        self.assertEqual(r.strip(), '')
+        self.assertEqual(context['ct'], ContentType.objects.get_for_model(article))

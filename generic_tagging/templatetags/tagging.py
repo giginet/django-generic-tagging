@@ -1,4 +1,5 @@
 from django import template
+from django.contrib.contenttypes.models import ContentType
 from ..models import TaggedItem, Tag
 
 register = template.Library()
@@ -18,3 +19,11 @@ def get_tags_for(object):
     :syntax: {% get_tags_for <object> as <variable> %}
     '''
     return Tag.objects.get_for_object(object)
+
+
+@register.assignment_tag
+def get_content_type_for(object):
+    '''retrieve content type object for the specific object.
+    :syntax: {% get_content_type_for <object> as <variable> %}
+    '''
+    return ContentType.objects.get_for_model(object)

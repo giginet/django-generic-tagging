@@ -43,15 +43,15 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
                             status=status.HTTP_400_BAD_REQUEST)
         return super().list(request, *args, **kwargs)
 
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        if request.user.is_authenticated:
-            data['author'] = request.user.pk
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def get_extra_fields(self):
+        extra_fields = {}
+        if self.request.user.is_authenticated():
+            extra_fields.update({'author': self.request.user})
+        return extra_fields
+
+    def perform_create(self, serializer):
+        extras = self.get_extra_fields()
+        serializer.save(**extras)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

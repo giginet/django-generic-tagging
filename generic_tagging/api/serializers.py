@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from rest_framework import serializers
 
 from generic_tagging.api.fields import TagField
@@ -50,12 +51,24 @@ class TaggedItemSerializer(serializers.ModelSerializer):
     content_type = serializers.PrimaryKeyRelatedField(queryset=ContentType.objects.all())
     created_at = serializers.DateTimeField(read_only=True)
     content_object = ContentObjectSerializer(read_only=True)
+    detail_api_url = serializers.SerializerMethodField(read_only=True)
+    lock_api_url = serializers.SerializerMethodField(read_only=True)
+    unlock_api_url = serializers.SerializerMethodField(read_only=True)
     tag = TagField()
+
+    def get_detail_api_url(self, obj):
+        return reverse('taggeditem-detail', args=[obj.pk,])
+
+    def get_lock_api_url(self, obj):
+        return reverse('taggeditem-lock', args=[obj.pk,])
+
+    def get_unlock_api_url(self, obj):
+        return reverse('taggeditem-unlock', args=[obj.pk,])
 
     class Meta:
         model = TaggedItem
         fields = (
             'id', 'content_type', 'object_id', 'content_object',
             'author', 'locked', 'created_at',
-            'tag'
+            'tag', 'detail_api_url', 'lock_api_url', 'unlock_api_url'
         )

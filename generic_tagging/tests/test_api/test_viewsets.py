@@ -113,7 +113,10 @@ class TaggedItemViewSet(TestCase):
                 'tag': {
                     'label': tagged_item0.tag.label,
                     'id': tagged_item0.tag.pk
-                }
+                },
+                'detail_api_url': '/api/tagged_items/%d/' % tagged_item0.pk,
+                'lock_api_url': '/api/tagged_items/%d/lock/' % tagged_item0.pk,
+                'unlock_api_url': '/api/tagged_items/%d/unlock/' % tagged_item0.pk,
             })
 
         r = self.client.get('/api/tagged_items/', {'content_type': ct1.pk, 'object_id': article1.pk})
@@ -136,7 +139,10 @@ class TaggedItemViewSet(TestCase):
             'tag': {
                 'label': tagged_item2.tag.label,
                 'id': tagged_item2.tag.pk
-            }
+            },
+            'detail_api_url': '/api/tagged_items/%d/' % tagged_item2.pk,
+            'lock_api_url': '/api/tagged_items/%d/lock/' % tagged_item2.pk,
+            'unlock_api_url': '/api/tagged_items/%d/unlock/' % tagged_item2.pk,
         })
 
     def test_retrieve(self):

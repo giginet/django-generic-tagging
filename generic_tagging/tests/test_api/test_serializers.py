@@ -41,6 +41,9 @@ class TaggedItemSerializerTestCase(TestCase):
         self.assertFalse(data['locked'])
         self.assertEqual(data['tag']['id'], tagged_item.tag.pk)
         self.assertEqual(data['tag']['label'], tagged_item.tag.label)
+        self.assertEqual(data['detail_api_url'], '/api/tagged_items/%d/' % tagged_item.pk)
+        self.assertEqual(data['lock_api_url'], '/api/tagged_items/%d/lock/' % tagged_item.pk)
+        self.assertEqual(data['unlock_api_url'], '/api/tagged_items/%d/unlock/' % tagged_item.pk)
 
     def test_write_with_new_tag(self):
         user = UserFactory()

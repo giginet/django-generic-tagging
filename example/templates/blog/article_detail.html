@@ -1,6 +1,10 @@
+{% load staticfiles %}
+{% load tagging %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="http://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+    <script src="{% static 'javascript/generic-tagging.js' %}"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
@@ -8,6 +12,24 @@
 <h1>{{ object.title }}</h1>
 <div>
     {{ object.body }}
+</div>
+{% get_content_type_for object as ct %}
+<div class="generic-tagging-container" data-content-type="{{ ct.pk }}" data-object-id="{{ object.id }}">
+    <ul class="tag-list" data-tag-list-api="{% url 'taggeditem-list' %}">
+        <li class="tag">
+            <a href="" class="tag-link">Tag name</a>
+            <a href="#" class="delete-button">Delete</a>
+            <a href="#" class="lock-button">Lock</a>
+        </li>
+    </ul>
+    <div class="generic-tagging-form">
+        <form action="{% url 'taggeditem-list' %}">
+            <input type="text" name="tag">
+            <input type="hidden" name="content_type" value="{{ ct.pk }}">
+            <input type="hidden" name="object_id" value="{{ object.pk }}">
+            <input type="submit">
+        </form>
+    </div>
 </div>
 </body>
 </html>

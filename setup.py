@@ -3,7 +3,7 @@ import sys
 from setuptools import setup, find_packages
 
 NAME = 'django-generic-tagging'
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 
 def read(filename):
@@ -31,7 +31,7 @@ setup(
     description='A generic tagging plugin for Django',
     long_description=read('README.rst'),
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',

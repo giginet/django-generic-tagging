@@ -63,11 +63,9 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
     def lock(self, request, pk):
         item = self.get_object()
         try:
-            item.lock(request.user)
+            item.lock()
             serializer = TaggedItemSerializer(item)
             return Response(serializer.data)
-        except PermissionDenied:
-            return Response(status=status.HTTP_403_FORBIDDEN)
         except ValidationError:
             return Response('the tag is already locked',
                             status=status.HTTP_400_BAD_REQUEST)
@@ -76,11 +74,9 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
     def unlock(self, request, pk):
         item = self.get_object()
         try:
-            item.unlock(request.user)
+            item.unlock()
             serializer = TaggedItemSerializer(item)
             return Response(serializer.data)
-        except PermissionDenied:
-            return Response(status=status.HTTP_403_FORBIDDEN)
         except ValidationError:
             return Response('the tag is already unlocked',
                             status=status.HTTP_400_BAD_REQUEST)

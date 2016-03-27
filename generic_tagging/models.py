@@ -134,26 +134,20 @@ class TaggedItem(models.Model):
             raise CannotDeleteLockedTagException('Can not delete locked tag')
         return super().delete(*args, **kwargs)
 
-    def lock(self, by_user):
+    def lock(self):
         '''Lock this tag
-        If `by_user` doesn't have `lock_tagged_item` permission, then it will raise `PermissionDenied` exception
         :param by_user: User who attempt to lock
         '''
         if self.locked:
             raise ValidationError('''The tagged item is already locked''')
-        if not by_user.has_perm('generic_tagging.lock_tagged_item'):
-            raise PermissionDenied('''The user doesn't have lock_tagged_item permission''')
         self.locked = True
         self.save()
 
-    def unlock(self, by_user):
+    def unlock(self):
         '''Unlock this tag
-        If `by_user` doesn't have `unlock_tagged_item` permission, then it will raise `PermissionDenied` exception
         :param by_user:
         '''
         if not self.locked:
             raise ValidationError('''The tagged item is already unlocked''')
-        if not by_user.has_perm('generic_tagging.unlock_tagged_item'):
-            raise PermissionDenied('''The user doesn't have unlock_tagged_item permission''')
         self.locked = False
         self.save()

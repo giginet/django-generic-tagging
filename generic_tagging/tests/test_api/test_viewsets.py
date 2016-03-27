@@ -2,7 +2,6 @@ from urllib.parse import quote
 from django.test.testcases import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
 from rest_framework.test import APIClient
 from generic_tagging.tests.factories import TagFactory, TaggedItemFactory, UserFactory, \
     TagTestArticle0Factory, TagTestArticle1Factory
@@ -211,8 +210,6 @@ class TaggedItemViewSet(TestCase):
         self.assertEqual(TaggedItem.objects.count(), count)
 
     def test_lock(self):
-        lock_permission = Permission.objects.get(codename='lock_tagged_item')
-        self.user.user_permissions.add(lock_permission)
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory()
@@ -220,15 +217,7 @@ class TaggedItemViewSet(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
 
-    def test_lock_without_permission(self):
-        item = TaggedItemFactory()
-        r = self.client.patch('/api/tagged_items/%d/lock/' % item.pk)
-        self.assertEqual(r.status_code, 403)
-        self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)
-
     def test_lock_for_locked_item(self):
-        lock_permission = Permission.objects.get(codename='lock_tagged_item')
-        self.user.user_permissions.add(lock_permission)
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory(locked=True)
@@ -237,8 +226,6 @@ class TaggedItemViewSet(TestCase):
         self.assertTrue(TaggedItem.objects.get(pk=item.pk).locked)
 
     def test_unlock(self):
-        unlock_permission = Permission.objects.get(codename='unlock_tagged_item')
-        self.user.user_permissions.add(unlock_permission)
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory(locked=True)
@@ -246,14 +233,7 @@ class TaggedItemViewSet(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertFalse(TaggedItem.objects.get(pk=item.pk).locked)
 
-    def test_unlock_without_permission(self):
-        item = TaggedItemFactory(locked=True)
-        r = self.client.patch('/api/tagged_items/%d/unlock/' % item.pk)
-        self.assertEqual(r.status_code, 403)
-
     def test_unlock_for_unlocked_item(self):
-        unlock_permission = Permission.objects.get(codename='unlock_tagged_item')
-        self.user.user_permissions.add(unlock_permission)
         self.client.login(username=self.user.username, password='password')
 
         item = TaggedItemFactory()

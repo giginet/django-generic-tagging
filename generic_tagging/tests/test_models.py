@@ -62,49 +62,31 @@ class TaggedItemTestCase(TestCase):
         self.assertEqual(items[1], item0)
         self.assertEqual(items[2], item1)
 
-    def test_lock_without_permission(self):
-        tag = TaggedItemFactory()
-        self.assertRaises(PermissionDenied, tag.lock, self.user)
-
     def test_lock(self):
         item = TaggedItemFactory()
         self.assertFalse(item.locked)
 
-        permission = Permission.objects.get(codename='lock_tagged_item')
-        self.user.user_permissions.add(permission)
-        # reload user to prevent caching
-        user = User.objects.get(pk=self.user.pk)
-
-        item.lock(self.user)
+        item.lock()
         self.assertTrue(item.locked)
 
     def test_lock_with_locked_item(self):
         item = TaggedItemFactory(locked=True)
         self.assertTrue(item.locked)
 
-        self.assertRaises(ValidationError, item.lock, self.user)
-
-    def test_unlock_without_permission(self):
-        tag = TaggedItemFactory(locked=True)
-        self.assertRaises(PermissionDenied, tag.unlock, self.user)
+        self.assertRaises(ValidationError, item.lock)
 
     def test_unlock(self):
         item = TaggedItemFactory(locked=True)
         self.assertTrue(item.locked)
 
-        permission = Permission.objects.get(codename='unlock_tagged_item')
-        self.user.user_permissions.add(permission)
-        # reload user to prevent caching
-        user = User.objects.get(pk=self.user.pk)
-
-        item.unlock(user)
+        item.unlock()
         self.assertFalse(item.locked)
 
     def test_unlock_with_not_locked_item(self):
         item = TaggedItemFactory()
         self.assertFalse(item.locked)
 
-        self.assertRaises(ValidationError, item.unlock, self.user)
+        self.assertRaises(ValidationError, item.unlock)
 
     def test_delete_for_unlocked_item(self):
         item = TaggedItemFactory()

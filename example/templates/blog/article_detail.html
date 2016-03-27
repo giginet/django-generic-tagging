@@ -20,6 +20,7 @@
             <a href="" class="tag-link">Tag name</a>
             <a href="#" class="delete-button">Delete</a>
             <a href="#" class="lock-button">Lock</a>
+            <a href="#" class="unlock-button">Unlock</a>
         </li>
     </ul>
     <div class="generic-tagging-form">
@@ -27,7 +28,7 @@
             <input type="text" name="tag">
             <input type="hidden" name="content_type" value="{{ ct.pk }}">
             <input type="hidden" name="object_id" value="{{ object.pk }}">
-            <input type="submit">
+            <input type="submit" value="Add tag">
         </form>
     </div>
 </div>

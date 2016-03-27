@@ -17,9 +17,35 @@ $(function() {
             $link.text(item['tag']['label']);
             $link.attr('href', item['tag']['absolute_url']);
             $tagList.append($newTag);
+
+            $newTag.find('.delete-button').attr('href', item['detail_api_url']);
+            var $lockLink = $newTag.find('.lock-button');
+            $lockLink.attr('href', item['lock_api_url']);
+
+            var $unlockLink = $newTag.find('.unlock-button');
+            $unlockLink.attr('href', item['unlock_api_url']);
+            toggleLockState($newTag, item['locked']);
+
             if (animation) {
                 $newTag.fadeOut(0);
                 $newTag.fadeIn('slow');
+            }
+        }
+
+        function toggleLockState($tag, locked) {
+            var $deleteLink = $tag.find('.delete-button');
+            var $lockLink = $tag.find('.lock-button');
+            var $unlockLink = $tag.find('.unlock-button');
+            if (locked) {
+                $lockLink.hide();
+                $unlockLink.show();
+                $deleteLink.hide();
+                $tag.addClass('locked');
+            } else {
+                $lockLink.show();
+                $deleteLink.show();
+                $unlockLink.hide();
+                $tag.removeClass('locked');
             }
         }
 
@@ -31,7 +57,7 @@ $(function() {
                 });
             })
             .fail(function(e) {
-                alert(e['responseText']);
+                alert(e['responseJSON']);
             });
 
         // create
@@ -46,7 +72,7 @@ $(function() {
                     addTag(item, true);
                 })
                 .fail(function(e) {
-                    alert(e['responseText']);
+                    alert(e['responseJSON']);
                 });
            return false;
         });
@@ -66,10 +92,38 @@ $(function() {
                             });
                         })
                         .fail(function(response) {
-
+                            alert(response['responseJSON']);
                         });
                 }
                 return false;
+        });
+
+        // lock
+        $tagList.delegate('.lock-button', 'click', function(e) {
+            e.preventDefault();
+            var $tag = $(this).closest('li.tag');
+            var lockEndPoint = $(this).attr('href');
+            $.when($.ajax({'method': 'PATCH', 'url': lockEndPoint}))
+                        .done(function(response) {
+                            toggleLockState($tag, true);
+                        })
+                        .fail(function(response) {
+                            alert(response['responseJSON']);
+                        });
+        });
+
+        // unlock
+        $tagList.delegate('.unlock-button', 'click', function(e) {
+            e.preventDefault();
+            var $tag = $(this).closest('li.tag');
+            var unlockEndPoint = $(this).attr('href');
+            $.when($.ajax({'method': 'PATCH', 'url': unlockEndPoint}))
+                        .done(function(response) {
+                            toggleLockState($tag, false);
+                        })
+                        .fail(function(response) {
+                            alert(response['responseJSON']);
+                        });
         });
     });
 });

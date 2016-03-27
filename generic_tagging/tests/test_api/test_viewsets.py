@@ -23,8 +23,7 @@ class TagViewSetTestCase(TestCase):
     def _dict_for_tag(tag):
         return {'id': tag.pk,
                 'label': tag.label,
-                'url': 'http://testserver/api/tags/%d/' % tag.pk,
-                'absolute_url': 'http://testserver/%s/' % quote(tag.label)}
+                'url': '/%s/' % quote(tag.label)}
 
     def test_list(self):
         r = self.client.get('/api/tags/')
@@ -60,7 +59,7 @@ class TagViewSetTestCase(TestCase):
         self.assertEqual(r.status_code, 405)
 
 
-class TaggedItemViewSet(TestCase):
+class TaggedItemViewSetTestCase(TestCase):
     def setUp(self):
         self.user = UserFactory()
 
@@ -104,14 +103,15 @@ class TaggedItemViewSet(TestCase):
                     'content_type': tagged_item0.content_type.pk,
                     'object_id': tagged_item0.object_id,
                     'str': str(tagged_item0.content_object),
-                    'absolute_url': 'http://testserver/absolute_url/'
+                    'url': '/absolute_url/'
                 },
                 'author': tagged_item0.author.pk,
                 'locked': False,
                 'created_at': tagged_item0.created_at.isoformat(),
                 'tag': {
                     'label': tagged_item0.tag.label,
-                    'id': tagged_item0.tag.pk
+                    'id': tagged_item0.tag.pk,
+                    'url': '/%s/' % quote(tagged_item0.tag.label)
                 },
                 'detail_api_url': '/api/tagged_items/%d/' % tagged_item0.pk,
                 'lock_api_url': '/api/tagged_items/%d/lock/' % tagged_item0.pk,
@@ -130,14 +130,15 @@ class TaggedItemViewSet(TestCase):
                 'content_type': tagged_item2.content_type.pk,
                 'object_id': tagged_item2.object_id,
                 'str': str(tagged_item2.content_object),
-                'absolute_url': None
+                'url': None
             },
             'author': tagged_item2.author.pk,
             'locked': False,
             'created_at': tagged_item2.created_at.isoformat(),
             'tag': {
                 'label': tagged_item2.tag.label,
-                'id': tagged_item2.tag.pk
+                'id': tagged_item2.tag.pk,
+                'url': '/%s/' % quote(tagged_item2.tag.label)
             },
             'detail_api_url': '/api/tagged_items/%d/' % tagged_item2.pk,
             'lock_api_url': '/api/tagged_items/%d/lock/' % tagged_item2.pk,

@@ -6,10 +6,9 @@ from generic_tagging.models import Tag
 
 class TagField(serializers.Field):
     def to_representation(self, obj):
-        return {
-            'id': obj.id,
-            'label': obj.label
-        }
+        from generic_tagging.api.serializers import TagSerializer
+        serializer = TagSerializer(obj)
+        return serializer.data
 
     def to_internal_value(self, data):
         if isinstance(data, str):

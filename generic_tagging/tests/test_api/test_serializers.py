@@ -17,7 +17,7 @@ class ContentObjectSerializerTestCase(TestCase):
             self.assertEqual(data, {
                 'content_type': ct.pk,
                 'object_id': article.pk,
-                'absolute_url': 'absolute_url',
+                'url': 'absolute_url',
                 'str': str(article)
             })
 

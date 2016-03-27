@@ -1,5 +1,6 @@
 from django import template
 from django.contrib.contenttypes.models import ContentType
+from django.template.loader import render_to_string
 from ..models import TaggedItem, Tag
 
 register = template.Library()
@@ -27,3 +28,13 @@ def get_content_type_for(object):
     :syntax: {% get_content_type_for <object> as <variable> %}
     '''
     return ContentType.objects.get_for_model(object)
+
+
+@register.simple_tag
+def render_generic_tagging_head_tag():
+    return render_to_string('generic_tagging/head.html')
+
+
+@register.simple_tag
+def render_generic_tagging_component_tag_for(object):
+    return render_to_string('generic_tagging/component.html', {'object': object})

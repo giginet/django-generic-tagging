@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.template import Template, Context
 from django.contrib.contenttypes.models import ContentType
+from django.template.loader import render_to_string
 from .factories import TaggedItemFactory, TagTestArticle0Factory
 
 
@@ -48,3 +49,22 @@ class TaggingTemplateTagTestCase(TestCase):
         r = t.render(context)
         self.assertEqual(r.strip(), '')
         self.assertEqual(context['ct'], ContentType.objects.get_for_model(article))
+
+    def test_render_generic_tagging_head_tag(self):
+        t = Template(
+            "{% load tagging %}"
+            "{% render_generic_tagging_head_tag %}"
+        )
+        context = Context()
+        r = t.render(context)
+        self.assertEqual(r, render_to_string('generic_tagging/head.html'))
+
+    def test_render_generic_tagging_component_tag_for(self):
+        article = TagTestArticle0Factory()
+        t = Template(
+            "{% load tagging %}"
+            "{% render_generic_tagging_component_tag_for article %}"
+        )
+        context = Context({'article': article})
+        r = t.render(context)
+        self.assertEqual(r, render_to_string('generic_tagging/component.html', {'object': article}))

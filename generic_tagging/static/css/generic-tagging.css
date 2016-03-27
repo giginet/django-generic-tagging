@@ -61,7 +61,7 @@
     width: 5px;
     height: 5px;
     margin-left: 1px;
-    cursor: default;
+    cursor: pointer;
 }
 
 .generic-tagging-container .tag-list .tag .tool .util.delete-button {

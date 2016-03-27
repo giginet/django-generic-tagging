@@ -5,6 +5,7 @@
 <head>
     <script src="http://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
     <script src="{% static 'javascript/generic-tagging.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generic-tagging.css' %}">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
@@ -18,9 +19,11 @@
     <ul class="tag-list" data-tag-list-api="{% url 'taggeditem-list' %}">
         <li class="tag">
             <a href="" class="tag-link">Tag name</a>
-            <a href="#" class="delete-button">Delete</a>
-            <a href="#" class="lock-button">Lock</a>
-            <a href="#" class="unlock-button">Unlock</a>
+            <nav class="tool">
+                <a href="#" class="util delete-button"></a>
+                <a href="#" class="util lock-button"></a>
+                <a href="#" class="util unlock-button"></a>
+            </nav>
         </li>
     </ul>
     <div class="generic-tagging-form">

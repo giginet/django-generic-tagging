@@ -176,6 +176,23 @@ class TaggedItemViewSet(TestCase):
         tagged_item = TaggedItem.objects.all()[0]
         self.assertIsNone(tagged_item.author)
 
+    def test_create_with_already_added(self):
+        article = TagTestArticle0Factory()
+        ct = ContentType.objects.get_for_model(article)
+        item = TaggedItemFactory(content_object=article, tag__label='already added')
+
+        r = self.client.post('/api/tagged_items/', {'tag': 'already added', 'object_id': article.pk, 'content_type': ct.pk})
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.data['responseText'], "'already added' is already added.")
+
+    def test_create_with_empty_label(self):
+        article = TagTestArticle0Factory()
+        ct = ContentType.objects.get_for_model(article)
+
+        r = self.client.post('/api/tagged_items/', {'tag': '', 'object_id': article.pk, 'content_type': ct.pk})
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.data['responseText'], 'Tag label is required.')
+
     def test_create_with_author(self):
         self.client.login(username=self.user.username, password='password')
         item_count = TaggedItem.objects.count()

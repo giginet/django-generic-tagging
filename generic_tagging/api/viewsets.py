@@ -1,4 +1,5 @@
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins
@@ -43,14 +44,27 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
                             status=status.HTTP_400_BAD_REQUEST)
         return super().list(request, *args, **kwargs)
 
-    def get_extra_fields(self):
+    def create(self, request, *args, **kwargs):
+        object_id = self.request.data.get('object_id', None)
+        content_type = self.request.data.get('content_type', None)
+        label = self.request.data.get('tag', '')
+        if label == '':
+            return Response({'responseText': _("Tag label is required.")}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            item = TaggedItem.objects.get(object_id=object_id, content_type=content_type, tag__label=label)
+            return Response({'responseText': _("'%s' is already added." % label)}, status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            pass
+        return super().create(request, *args, **kwargs)
+
+    def _get_extra_fields(self):
         extra_fields = {}
         if self.request.user.is_authenticated():
             extra_fields.update({'author': self.request.user})
         return extra_fields
 
     def perform_create(self, serializer):
-        extras = self.get_extra_fields()
+        extras = self._get_extra_fields()
         serializer.save(**extras)
 
     def destroy(self, request, *args, **kwargs):

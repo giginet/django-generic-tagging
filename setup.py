@@ -52,13 +52,13 @@ setup(
     url='https://github.com/giginet/%s' % NAME,
     download_url='https://github.com/giginet/%s/tarball/master' % NAME,
     license='MIT',
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests', 'example')),
     include_package_data=True,
     package_data={
         '': ['README.rst',
              'requirements-test.txt'],
     },
-    zip_safe=True,
+    zip_safe=False,
     test_suite='runtests.run_tests',
     tests_require=readlist('requirements-test.txt'),
     **extra

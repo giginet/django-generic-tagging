@@ -8,3 +8,6 @@ class Article(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('blog_article_detail', (), {'pk': self.pk})
+
+    def __str__(self):
+        return self.title

@@ -15,7 +15,7 @@ $(function() {
             var $newTag = $tagTemplate.clone();
             var $link = $newTag.find('a.tag-link');
             $link.text(item['tag']['label']);
-            $link.attr('href', item['tag']['absolute_url']);
+            $link.attr('href', item['tag']['url']);
             $tagList.append($newTag);
 
             $newTag.find('.delete-button').attr('href', item['detail_api_url']);

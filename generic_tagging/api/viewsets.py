@@ -49,10 +49,10 @@ class TaggedItemViewSet(mixins.CreateModelMixin,
         content_type = self.request.data.get('content_type', None)
         label = self.request.data.get('tag', '')
         if label == '':
-            return Response({'responseText': _("Tag label is required.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(_("Tag label is required."), status=status.HTTP_400_BAD_REQUEST)
         try:
             item = TaggedItem.objects.get(object_id=object_id, content_type=content_type, tag__label=label)
-            return Response({'responseText': _("'%s' is already added." % label)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(_("'%s' is already added." % label), status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             pass
         return super().create(request, *args, **kwargs)

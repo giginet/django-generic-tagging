@@ -183,7 +183,7 @@ class TaggedItemViewSet(TestCase):
 
         r = self.client.post('/api/tagged_items/', {'tag': 'already added', 'object_id': article.pk, 'content_type': ct.pk})
         self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.data['responseText'], "'already added' is already added.")
+        self.assertEqual(r.data, "'already added' is already added.")
 
     def test_create_with_empty_label(self):
         article = TagTestArticle0Factory()
@@ -191,7 +191,7 @@ class TaggedItemViewSet(TestCase):
 
         r = self.client.post('/api/tagged_items/', {'tag': '', 'object_id': article.pk, 'content_type': ct.pk})
         self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.data['responseText'], 'Tag label is required.')
+        self.assertEqual(r.data, 'Tag label is required.')
 
     def test_create_with_author(self):
         self.client.login(username=self.user.username, password='password')

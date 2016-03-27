@@ -1,18 +1,10 @@
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% load tagging %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="http://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
-    {% render_generic_tagging_head_tag %}
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% block content %}
 <h1>{{ object.title }}</h1>
 <div>
     {{ object.body }}
 </div>
 {% render_generic_tagging_component_tag_for object %}
-</body>
-</html>
+{% endblock %}

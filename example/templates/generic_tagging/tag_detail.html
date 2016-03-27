@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Tag {{ object.label }}</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load tagging %}
+{% block content %}
 <h1>{{ object.label }}</h1>
 <div>
     {% for item in object.items.all %}
         <a href="{{ item.content_object.get_absolute_url }}">{{ item.content_object }}</a>
     {% endfor %}
 </div>
-</body>
-</html>
+{% endblock %}

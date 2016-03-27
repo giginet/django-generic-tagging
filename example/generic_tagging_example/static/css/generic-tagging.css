@@ -106,3 +106,28 @@
 .generic-tagging-container .tag-list .tag:hover .tool .util.unlock-button:hover {
     background-position: -10px -10px;
 }
+
+.generic-tagging-form {
+    margin-left: 5px;
+}
+
+.generic-tagging-container .generic-tagging-form .add-tag-button {
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin: 0 10px 0 0;
+    background: url(images/tag.png) no-repeat 0 0;
+}
+.generic-tagging-container .generic-tagging-form .add-tag-button:hover {
+    background-position: 0 -16px;
+}
+.generic-tagging-container .generic-tagging-form .add-tag-button.active {
+    background-position: 0 -32px !important;
+}
+
+.generic-tagging-container .generic-tagging-form .label-input {
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -o-border-radius: 3px;
+}

@@ -49,6 +49,22 @@ $(function() {
             }
         }
 
+        // form
+        var $addTagButton = $(this).find('.add-tag-button');
+        var $addTagForm = $(this).find('.add-tag-form');
+        $addTagForm.hide();
+        $addTagButton.on('click', function(e) {
+            e.preventDefault();
+            if ($(this).hasClass("active")) {
+                $(this).removeClass("active");
+                $addTagForm.hide();
+            } else {
+                $(this).addClass("active");
+                $addTagForm.show();
+                $addTagForm.find("input[type='text']").focus();
+            }
+        });
+
         // retrieve
         $.when($.get(listAPIEndpoint, {'object_id': objectID, 'content_type': contentType}))
             .done(function(tags) {
@@ -61,14 +77,13 @@ $(function() {
             });
 
         // create
-        var $form = $(this).find('form');
-        $form.on('submit', function(e) {
+        $addTagForm.on('submit', function(e) {
             e.preventDefault();
-            var endpoint = $form.attr('action');
-            var params = $form.serializeArray();
+            var endpoint = $(this).attr('action');
+            var params = $(this).serializeArray();
             $.when($.post(endpoint, params))
                 .done(function(item) {
-                    $form.find("[name='tag']").val('');
+                    $addTagForm.find('.label-input').val('');
                     addTag(item, true);
                 })
                 .fail(function(e) {

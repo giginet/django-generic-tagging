@@ -27,11 +27,11 @@
         </li>
     </ul>
     <div class="generic-tagging-form">
-        <form action="{% url 'taggeditem-list' %}">
-            <input type="text" name="tag">
+        <a class="add-tag-button" href="#"></a>
+        <form class="add-tag-form" action="{% url 'taggeditem-list' %}">
+            <input type="text" name="tag" class="label-input">
             <input type="hidden" name="content_type" value="{{ ct.pk }}">
             <input type="hidden" name="object_id" value="{{ object.pk }}">
-            <input type="submit" value="Add tag">
         </form>
     </div>
 </div>

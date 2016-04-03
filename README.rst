@@ -2,10 +2,10 @@ django-generic-tagging
 =========================
 
 .. image:: https://travis-ci.org/giginet/django-generic-tagging.svg?branch=master
-:target: https://travis-ci.org/giginet/django-generic-tagging
+    :target: https://travis-ci.org/giginet/django-generic-tagging
 
 .. image:: https://coveralls.io/repos/github/giginet/django-generic-tagging/badge.svg?branch=master
-:target: https://coveralls.io/github/giginet/django-generic-tagging?branch=master
+    :target: https://coveralls.io/github/giginet/django-generic-tagging?branch=master
 
 Author
     giginet <giginet.net@gmail.com>
@@ -32,8 +32,10 @@ Use pip_ like::
 Requirements
 ---------------------
 
-- [djangorestframework](http://www.django-rest-framework.org/)
+- djangorestframework_
 - jQuery 1.x / 2.x
+
+.. _djangorestframework: http://www.django-rest-framework.org/
 
 Usage
 --------------
@@ -43,31 +45,31 @@ You should refer the example application for detail.
 Configuration
 ~~~~~~~~~~~~~~~~~
 
-1. Put ``generic_tagging`` into your ``INSTALLED_APPS`` at settings module::
+1. Put ``generic_tagging`` into your ``INSTALLED_APPS`` at settings module
 
     .. code:: python
 
-      INSTALLED_APPS = (
-         ...
-         'generic_tagging',
-      )
+          INSTALLED_APPS = (
+             ...
+             'generic_tagging',
+          )
 
-2. Add URL patterns into your `urls.py`::
+2. Add URL patterns into your `urls.py`
 
     .. code:: python
 
-       from django.conf.urls import include, url
-       from django.contrib import admin
+           from django.conf.urls import include, url
+           from django.contrib import admin
 
-       from generic_tagging.api.routers import TaggingAPIRouter
+           from generic_tagging.api.routers import TaggingAPIRouter
 
-       tagging_router = TaggingAPIRouter(trailing_slash=True)
+           tagging_router = TaggingAPIRouter(trailing_slash=True)
 
-       urlpatterns = [
-           ...
-           url(r'^tags/', include('generic_tagging.urls')),
-           url(r'^api/', include(tagging_router.urls)),
-       ]
+           urlpatterns = [
+               ...
+               url(r'^tags/', include('generic_tagging.urls')),
+               url(r'^api/', include(tagging_router.urls)),
+           ]
 
 3. Create ``generic_tagging`` database tables by running::
 
@@ -83,36 +85,35 @@ All you have to do is embed the two template tags into your models' templates.
 
 2. Place ``{% render_generic_tagging_head_tag %}`` into ``<HEAD>`` tag
 
-3. Place ``{% render_generic_tagging_component_tag_for object %}`` to where you like.::
+3. Place ``{% render_generic_tagging_component_tag_for object %}`` to where you like.
 
     .. code:: html
 
-       {% load tagging %}
-       <!DOCTYPE html>
-       <html lang="en">
-       <head>
-           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-           {% render_generic_tagging_head_tag %}
-           ...
-       </head>
-       <body>
-           <h1>{{ object.title }}</h1>
-           {% render_generic_tagging_component_tag_for object %}
-       </body>
-       </html>
+           {% load tagging %}
+           <!DOCTYPE html>
+           <html lang="en">
+           <head>
+               <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+               {% render_generic_tagging_head_tag %}
+               ...
+           </head>
+           <body>
+               <h1>{{ object.title }}</h1>
+               {% render_generic_tagging_component_tag_for object %}
+           </body>
+           </html>
 
 Views
 -----------------
 
-This library has two default views.
+.. table:: This library has two default views.
 
-+---------------------+-----------------------------------------------+-----------------------------------+
-|Description            | Template path                                       | Reversed URL name               |
-+============+========================== +====================+
-|Tag list      | templates/generic_tagging/tag_list.html     | generic_tagging_tag_list      |
-+------------+--------------------------------------------------------+------------------------------------+
-|Tag detail  | templates/generic_tagging/tag_detail.html | generic_tagging_tag_detail |
-+------------+--------------------------------------------------------+------------------------------------+
+   ===========   ==========================================    ============================
+   Description   Template path                                 Reversed URL name
+   ===========   ==========================================    ============================
+   Tag list      templates/generic_tagging/tag_list.html       generic_tagging_tag_list
+   Tag detail    templates/generic_tagging/tag_detail.html     generic_tagging_tag_detail
+   ===========   ==========================================    ============================
 
 
 Tag list
@@ -120,16 +121,16 @@ Tag list
 
 This view displays all tags.
 
-``templates/generic_tagging/tag_list.html`` should be used as the template::
+``templates/generic_tagging/tag_list.html`` should be used as the template.
 
     .. code:: html
 
-        <h1>All available tags</h1>
-        <ul>
-            {% for tag in object_list %}
-                <li><a href="{{ tag.get_absolute_url %}">{{ tag.label }}</a></li>
-            {% endfor %}
-        </ul>
+            <h1>All available tags</h1>
+            <ul>
+                {% for tag in object_list %}
+                    <li><a href="{{ tag.get_absolute_url %}">{{ tag.label }}</a></li>
+                {% endfor %}
+            </ul>
 
 
 Tag detail
@@ -141,9 +142,31 @@ Each tags have permalinks to display all related objects.
 
     .. code:: html
 
-        <h1>All contents relative with {{ object.label }}</h1>
-        <ul>
-            {% for item in object.items.all %}
-                <li><a href="{{ item.content_object.get_absolute_url %}">{{ item.content_object }}</a></li>
-            {% endfor %}
-        </ul>
+            <h1>All contents relative with {{ object.label }}</h1>
+            <ul>
+                {% for item in object.items.all %}
+                    <li><a href="{{ item.content_object.get_absolute_url %}">{{ item.content_object }}</a></li>
+                {% endfor %}
+            </ul>
+
+
+
+
+API
+------------------
+
+``django-generic-tagging`` has REST-ful APIs.
+
+.. table:: List of API endpoints.
+
+    =========================  ========== ======================
+    Endpoint                   Method     Reversed URL name
+    =========================  ========== ======================
+    /tag/                      GET        ``tag-list``
+    /tagged_item/              GET        ``tagged_item-list``
+    /tagged_item/<pk>/         GET        ``tagged_item-detail``
+    /tagged_item/              CREATE     ``tagged_item-list``
+    /tagged_item/<pk>/         DELETE     ``tagged_item-detail``
+    /tagged_item/<pk>/lock/    PATCH      ``tagged_item-lock``
+    /tagged_item/<pk>/unlock/  PATCH      ``tagged_item-unlock``
+    =========================  ========== ======================

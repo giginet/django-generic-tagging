@@ -8,13 +8,13 @@ django-generic-tagging
     :target: https://coveralls.io/github/giginet/django-generic-tagging?branch=master
     
 .. image:: https://img.shields.io/pypi/status/django-generic-tagging.svg 
-    :target: https://github.com/giginet/django-generic-tagging
+    :target: https://pypi.python.org/pypi/django-generic-tagging
 
 .. image:: https://img.shields.io/pypi/pyversions/django-generic-tagging.svg 
-    :target: https://github.com/giginet/django-generic-tagging
+    :target: https://pypi.python.org/pypi/django-generic-tagging
 
 .. image:: https://img.shields.io/pypi/l/django-generic-tagging.svg 
-    :target: https://github.com/giginet/django-generic-tagging
+    :target: https://github.com/giginet/django-generic-tagging/blob/master/LICENSE.md
 
 Author
     giginet <giginet.net@gmail.com>

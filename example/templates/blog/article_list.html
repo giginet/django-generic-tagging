@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load tagging %}
+{% block content %}
+<h1>List of articles</h1>
+<ul>
+    {% for object in object_list %}
+    <li><a href="{{ object.get_absolute_url }}">{{ object.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load tagging %}
+{% block content %}
+<h1>{{ object.title }}</h1>
+<div>
+    {{ object.body }}
+</div>
+{% render_generic_tagging_component_tag_for object %}
+{% endblock %}

@@ -6,6 +6,15 @@ django-generic-tagging
 
 .. image:: https://coveralls.io/repos/github/giginet/django-generic-tagging/badge.svg?branch=master
     :target: https://coveralls.io/github/giginet/django-generic-tagging?branch=master
+    
+.. image:: https://img.shields.io/pypi/status/django-generic-tagging.svg 
+    :target: https://github.com/giginet/django-generic-tagging
+
+.. image:: https://img.shields.io/pypi/pyversions/django-generic-tagging.svg 
+    :target: https://github.com/giginet/django-generic-tagging
+
+.. image:: https://img.shields.io/pypi/l/django-generic-tagging.svg 
+    :target: https://github.com/giginet/django-generic-tagging
 
 Author
     giginet <giginet.net@gmail.com>
